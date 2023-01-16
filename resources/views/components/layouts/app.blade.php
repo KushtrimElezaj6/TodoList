@@ -1,4 +1,4 @@
-
+ 
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,14 +13,20 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @stack('stylesheets')
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-</head>
+  </head>
 
-<body class="text-gray-900">
-    <x-layouts.navbar></x-layouts.navbar>
+  <body class="text-gray-900 h-full">
+      <x-layouts.navbar></x-layouts.navbar>
+  
+      {{ $slot }}
+  
+      <x-flash-message />
+  </body>
+  
+  </html>
 
-    @yield('content')
 
-    <x-flash-message />
-</body>
-
-</html>
+<html>
+  <head>
+     
+   
