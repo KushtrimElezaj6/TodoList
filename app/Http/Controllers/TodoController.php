@@ -16,9 +16,22 @@ class TodoController extends Controller
      */
     public function index()
     {
-      $todos= Todo::paginate(18);
-      return view('todo.index', ['todos'=>$todos]);
+    if (request('search')) {
+         $todos = Todo::where('title', 'like', '%' . request('search') . '%')
+        ->orWhere('content', 'like', '%' . request('search') . '%')->paginate(8);
+
+    }   else{
+    $todos= Todo::orderBy('created_at',  'des')->paginate(8);
     }
+        return view('todo.index',['todos'=> $todos]);
+    }
+   
+
+
+   
+    
+        
+     
 
     /**
      * Show the form for creating a new resource.
@@ -27,7 +40,7 @@ class TodoController extends Controller
      */
     public function create()
     {
-      
+
     }
 
     /**
@@ -38,18 +51,16 @@ class TodoController extends Controller
      */
     public function store(Request $request)
     {
-       $data= $request->validate 
-       ([
-             'title' =>'required|max:250',
-             'content'=> 'required|max:250',
-             'complated_at' => 'required|date'
-       ]);
-
-       Todo::create($data);
-       
-       return back()->with("massage", "todo u krijua me sukses");
+        $data = $request->validate([
+                'title' => 'required|max:250',
+                'content' => 'required|max:250',
+                'due_date' => 'required|after:yesterday'
+            ]);
 
 
+        Todo::create($data);
+
+        return back()->with("massage", "todo u krijua me sukses");
     }
 
     /**
@@ -60,7 +71,7 @@ class TodoController extends Controller
      */
     public function show(Todo $Todo)
     {
-      
+
     }
 
     /**
@@ -71,8 +82,8 @@ class TodoController extends Controller
      */
     public function edit(Todo $Todo)
     {
-        
-        return view('todo.edit',['todo'=>$Todo]);
+
+        return view('todo.edit', ['todo' => $Todo]);
     }
 
     /**
@@ -84,16 +95,15 @@ class TodoController extends Controller
      */
     public function update(Request $request, Todo $Todo)
     {
-        $data= $request->validate 
-       ([
-             'title' =>'required|max:250',
-             'content'=> 'required|max:250',
-             'completed_at'=> 'required|date'
-       ]);
+        $data = $request->validate([
+                'title' => 'required|max:250',
+                'content' => 'required|max:250',
+                'completed_at' => 'required|date'
+            ]);
 
-       $Todo->update($data);
-       
-       return back()->with("message", "Todo has updatet");
+        $Todo->update($data);
+
+        return back()->with("message", "Todo has updatet");
     }
 
     /**
@@ -109,18 +119,13 @@ class TodoController extends Controller
     }
 
 
-    public function completed(Request $request,Todo $todo){
+    public function completed(Request $request, Todo $todo)
+    {
 
 
 
         $todo->update(['completed_at' => now()]);
- 
-        return back()->with("message","Completed Succesfully");
- 
- 
-     }
- 
- 
- 
-}
 
+        return back()->with("message", "Completed Succesfully");
+    }
+}
