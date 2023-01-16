@@ -14,9 +14,9 @@ use App\Http\Controllers\TodoController;
 |
 */
 
-Route::get('/', [Todocontroller::class, 'index']);
-Route::get('/todo/{todo}', [Todocontroller::class, 'edit']);
-Route::post('/todo', [Todocontroller::class, 'store'])->name('todo');
+Route::get('/', [Todocontroller::class, 'index'])->name('todo.index');
+Route::get('/todo/edit/{todo}', [Todocontroller::class, 'edit']);
+Route::post('/todo', [Todocontroller::class, 'store']);
 Route::patch('/todo/{todo}', [Todocontroller::class, 'update']);
 Route::delete('/todo/{todo}', [Todocontroller::class, 'destroy']);
 Route::patch('/todo/{todo}/completed', [TodoController::class, 'completed']);
