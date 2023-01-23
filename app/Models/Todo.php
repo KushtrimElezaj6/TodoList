@@ -10,12 +10,28 @@ class Todo extends Model
 {
     use HasFactory;
 
-    protected $fillable=[
+    const LOW = 'low';
+    const MEDIUM = 'medium';
+    const HIGHT = 'hight';
+    const RISK = 'risk';
+
+    protected $fillable = [
         'title',
         'content',
         'complated_at',
-         'due_date'
-
-
+        'due_date',
+        'priority'
     ];
+
+    protected $dates = ['due_dates'];
+
+    public static function getPriority()
+    {
+        return [
+            'low' => self::LOW,
+            'medium' => self::MEDIUM,
+            'hight' => self::HIGHT,
+            'risk' => self::RISK
+        ];
+    }
 }

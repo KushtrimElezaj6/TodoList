@@ -20,3 +20,4 @@ Route::post('/todo', [Todocontroller::class, 'store']);
 Route::patch('/todo/{todo}', [Todocontroller::class, 'update']);
 Route::delete('/todo/{todo}', [Todocontroller::class, 'destroy']);
 Route::patch('/todo/{todo}/completed', [TodoController::class, 'completed']);
+Route::get('/tags', [TagController::class , 'index'])->name('tag.index');

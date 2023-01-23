@@ -16,22 +16,17 @@ class TodoController extends Controller
      */
     public function index()
     {
-    if (request('search')) {
-         $todos = Todo::where('title', 'like', '%' . request('search') . '%')
-        ->orWhere('content', 'like', '%' . request('search') . '%')->paginate(8);
+        if (request('search')) {
+            $todos = Todo::where('title', 'like', '%' . request('search') . '%')
+                ->orWhere('content', 'like', '%' . request('search') . '%')->paginate(5);
+        } else {
+            $todos = Todo::orderBy('created_at',  'desc')->paginate(5);
+        }
 
-    }   else{
-    $todos= Todo::orderBy('created_at',  'des')->paginate(8);
+
+        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority()]);
     }
-        return view('todo.index',['todos'=> $todos]);
-    }
-   
 
-
-   
-    
-        
-     
 
     /**
      * Show the form for creating a new resource.
@@ -40,7 +35,6 @@ class TodoController extends Controller
      */
     public function create()
     {
-
     }
 
     /**
@@ -52,10 +46,11 @@ class TodoController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-                'title' => 'required|max:250',
-                'content' => 'required|max:250',
-                'due_date' => 'required|after:yesterday'
-            ]);
+            'title' => 'required|max:250',
+            'content' => 'required|max:250',
+            'due_date' => 'required|after:yesterday',
+            'priority'=> 'nullable'
+        ]);
 
 
         Todo::create($data);
@@ -71,7 +66,6 @@ class TodoController extends Controller
      */
     public function show(Todo $Todo)
     {
-
     }
 
     /**
@@ -83,7 +77,8 @@ class TodoController extends Controller
     public function edit(Todo $Todo)
     {
 
-        return view('todo.edit', ['todo' => $Todo]);
+
+        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority()]);
     }
 
     /**
@@ -96,10 +91,11 @@ class TodoController extends Controller
     public function update(Request $request, Todo $Todo)
     {
         $data = $request->validate([
-                'title' => 'required|max:250',
-                'content' => 'required|max:250',
-                'completed_at' => 'required|date'
-            ]);
+            'title' => 'required|max:250',
+            'content' => 'required|max:250',
+            'completed_at' => 'required|date',
+             'priority'=> 'nullable'
+        ]);
 
         $Todo->update($data);
 
