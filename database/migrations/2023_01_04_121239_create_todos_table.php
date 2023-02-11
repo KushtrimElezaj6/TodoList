@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('todos', function (Blueprint $table) {
             $table->id();
+            
             $table->string('title', 255);
             $table->text('content');
             $table->date('completed_at')->nullable();
