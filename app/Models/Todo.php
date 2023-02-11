@@ -20,7 +20,8 @@ class Todo extends Model
         'content',
         'complated_at',
         'due_date',
-        'priority'
+        'priority',
+        'user_id'
     ];
 
     protected $dates = ['due_dates'];
@@ -34,4 +35,9 @@ class Todo extends Model
             'risk' => self::RISK
         ];
     }
+    public function tags(){
+
+        return $this->belongsToMany(Tag::class, 'todo_tag', 'todo_id', 'tag_id');
+    }
+
 }
