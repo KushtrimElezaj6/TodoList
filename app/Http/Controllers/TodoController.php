@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Tag;
 use App\Models\Todo;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\Return_;
 
 class TodoController extends Controller
@@ -17,14 +19,12 @@ class TodoController extends Controller
     public function index()
     {
         if (request('search')) {
-            $todos = Todo::where('title', 'like', '%' . request('search') . '%')
+            $todos = Todo::with('tags')->where('title', 'like', '%' . request('search') . '%')
                 ->orWhere('content', 'like', '%' . request('search') . '%')->paginate(5);
         } else {
-            $todos = Todo::orderBy('created_at',  'desc')->paginate(5);
+            $todos = Todo::with('tags')->orderBy('created_at',  'desc')->paginate(5);
         }
-
-
-        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority()]);
+        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority(),'tags'=> Tag::all() ]);
     }
 
 
@@ -49,11 +49,20 @@ class TodoController extends Controller
             'title' => 'required|max:250',
             'content' => 'required|max:250',
             'due_date' => 'required|after:yesterday',
-            'priority'=> 'nullable'
+            'priority'=> 'nullable',
+            'tags' => 'nullable'
         ]);
 
 
-        Todo::create($data);
+            $todos= Todo::create([...['user_id'=> Auth::user()->id], ...$data]);
+
+        if ($request->has('tags'))
+        {
+           foreach($request->tags as $tag)
+           {
+            $todos->tags()->attach(explode(',', $tag));
+           }
+        }
 
         return back()->with("massage", "todo u krijua me sukses");
     }
@@ -78,7 +87,7 @@ class TodoController extends Controller
     {
 
 
-        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority()]);
+        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority(),'tags'=> Tag::all()]);
     }
 
     /**
