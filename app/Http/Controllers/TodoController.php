@@ -11,7 +11,7 @@ use PhpParser\Node\Stmt\Return_;
 
 class TodoController extends Controller
 {
-    /**
+    /*
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
@@ -19,12 +19,15 @@ class TodoController extends Controller
     public function index()
     {
         if (request('search')) {
-            $todos = Todo::with('tags')->where('title', 'like', '%' . request('search') . '%')
-                ->orWhere('content', 'like', '%' . request('search') . '%')->paginate(5);
+            $search = request('search');
+            $todos = Todo::where(function ($query) use ($search) {
+                $query->where('title', 'like', "%{$search}%")
+                    ->orWhere('content', 'like', "%{$search}%");
+            })->where('user_id', Auth::user()->id)->paginate(5);
         } else {
-            $todos = Todo::with('tags')->orderBy('created_at',  'desc')->paginate(5);
+            $todos = Todo::with('tags')->orderBy('created_at',  'desc')->where('user_id', Auth::user()->id)->paginate(5);
         }
-        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority(),'tags'=> Tag::all() ]);
+        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority(), 'tags' => Tag::all()]);
     }
 
 
@@ -49,19 +52,17 @@ class TodoController extends Controller
             'title' => 'required|max:250',
             'content' => 'required|max:250',
             'due_date' => 'required|after:yesterday',
-            'priority'=> 'nullable',
+            'priority' => 'nullable',
             'tags' => 'nullable'
         ]);
 
 
-            $todos= Todo::create([...['user_id'=> Auth::user()->id], ...$data]);
+        $todos = Todo::create([...['user_id' => Auth::user()->id], ...$data]);
 
-        if ($request->has('tags'))
-        {
-           foreach($request->tags as $tag)
-           {
-            $todos->tags()->attach(explode(',', $tag));
-           }
+        if ($request->has('tags')) {
+            foreach ($request->tags as $tag) {
+                $todos->tags()->attach(explode(',', $tag));
+            }
         }
 
         return back()->with("massage", "todo u krijua me sukses");
@@ -85,9 +86,9 @@ class TodoController extends Controller
      */
     public function edit(Todo $Todo)
     {
+        $this->authorize('view', $Todo);
 
-
-        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority(),'tags'=> Tag::all()]);
+        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority(), 'tags' => Tag::all()]);
     }
 
     /**
@@ -103,7 +104,7 @@ class TodoController extends Controller
             'title' => 'required|max:250',
             'content' => 'required|max:250',
             'completed_at' => 'required|date',
-             'priority'=> 'nullable'
+            'priority' => 'nullable'
         ]);
 
         $Todo->update($data);
