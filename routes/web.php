@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\TodoController;
 use App\Http\Controllers\TagController;
+use App\Http\Controllers\ProjectController;
 
 /*
 |--------------------------------------------------------------------------
@@ -42,6 +43,16 @@ Route::post('/tags', [Tagcontroller::class, 'store']);
 Route::delete('/tags/{tag}', [Tagcontroller::class, 'destroy']);
 Route::get('/tags/edit/{tag}', [Tagcontroller::class, 'edit']);
 Route::patch('/tags/{tag}', [Tagcontroller::class, 'update']);
+
+
+
+Route::get('/projects', [Projectcontroller::class, 'index'])->name('projects.index');
+Route::post('/projects', [Projectcontroller::class, 'store']);
+Route::delete('/projects/{project}', [Projectcontroller::class, 'destroy']);
+Route::get('/projects/edit/{project}', [Projectcontroller::class, 'edit']);
+Route::patch('/projects/{project}', [Projectcontroller::class, 'update']);
+
+
 
 });
 
