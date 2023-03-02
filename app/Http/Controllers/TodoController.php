@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Tag;
 use App\Models\Todo;
+
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Stmt\Return_;
+
 
 class TodoController extends Controller
 {
@@ -27,7 +30,7 @@ class TodoController extends Controller
         } else {
             $todos = Todo::with('tags')->orderBy('created_at',  'desc')->where('user_id', Auth::user()->id)->paginate(5);
         }
-        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority(), 'tags' => Tag::all()]);
+        return view('todo.index', ['todos' => $todos, 'priorities' => Todo::getPriority(), 'tags' => Tag::all(), 'projects' =>Project::all()]);
     }
 
 
@@ -38,6 +41,9 @@ class TodoController extends Controller
      */
     public function create()
     {
+
+        $tags = Tag::all();
+        return view('todos.index', ['tags' => $tags ]);
     }
 
     /**
@@ -53,7 +59,9 @@ class TodoController extends Controller
             'content' => 'required|max:250',
             'due_date' => 'required|after:yesterday',
             'priority' => 'nullable',
-            'tags' => 'nullable'
+            'tags' => 'nullable',
+            'project_id'=>'nullable'
+
         ]);
 
 
@@ -88,7 +96,10 @@ class TodoController extends Controller
     {
         $this->authorize('view', $Todo);
 
-        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority(), 'tags' => Tag::all()]);
+        $todo = $Todo->load('tags');
+
+
+        return view('todo.edit', ['todo' => $Todo, 'priorities' => Todo::getPriority(), 'tags' => Tag::all(), 'tagIds' => $todo->tags->pluck('id')->toArray()]);
     }
 
     /**
@@ -103,13 +114,20 @@ class TodoController extends Controller
         $data = $request->validate([
             'title' => 'required|max:250',
             'content' => 'required|max:250',
-            'completed_at' => 'required|date',
-            'priority' => 'nullable'
+            'priority' => 'nullable',
+            'due_date' => 'nullable',
+            'tags'=>'nullable',
         ]);
 
         $Todo->update($data);
+        $Todo->tags()->detach();
+        if ($request->has('tags')) {
+            foreach ($request->tags as $tag) {
+                $Todo->tags()->attach(explode(',', $tag));
+            }
+        }
 
-        return back()->with("message", "Todo has updatet");
+        return back()->with("message", "Todo has been updated");
     }
 
     /**
