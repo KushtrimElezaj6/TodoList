@@ -21,7 +21,8 @@ class Todo extends Model
         'complated_at',
         'due_date',
         'priority',
-        'user_id'
+        'user_id',
+        'project_id'
     ];
 
     protected $dates = ['due_dates'];
@@ -38,6 +39,11 @@ class Todo extends Model
     public function tags(){
 
         return $this->belongsToMany(Tag::class, 'todo_tag', 'todo_id', 'tag_id');
+    }
+
+    public function projects(){
+
+        return $this->belongsToMany(Project::class , 'project_id', 'todo_id');
     }
 
 }
