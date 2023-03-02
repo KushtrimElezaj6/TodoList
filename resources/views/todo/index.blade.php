@@ -8,96 +8,115 @@
             <div>{{ $error }}</div>
         @endforeach
     @endif
-    <form action="{{ route('todo.index') }}">
 
-        <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only">Search</label>
-        <div class="relative">
-            <div class="absolute inset-y-0 left-2 flex items-center pl-3 pointer-events-none">
-                <svg aria-hidden="true" class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
-                    viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-            </div>
+
+    
+    <div class="flex flex-col gap-6 items-center justify-center min-h-screen bg-gray-100">
+        <div class="px-8 py-6 mt-4 text-left shadow-lg bg-gray-200">
+            <h1 class="text-3xl font-bold mb-[8px] md:mb-6 font-serif tracking-wider text-blue-700"> CREATE A TASK </h1>
+    <x-layouts.create-post-form :priorities="$priorities" :tags="$tags" :projects="$projects"> </x-layouts.create-post-form>
+    <form class="bg-gray-100 flex justify-center w-full " action="{{ route('todo.index') }}">
+
+        
+
+        <div class="w-[400px] flex flex-row gap-2 justify-around ">
             <input type="search" id="default-search" name="search"
-                class="block w-full p-4 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500"
+            class="bg-gray-50 border-2 border-gray-300 text-gray-900 text-sm rounded-lg w-full focus:ring-blue-500
+            block p-2.5 dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search Mockups, Logos..." required>
+                
             <button type="submit"
-                class="text-white absolute right-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2">Search</button>
+                class="text-white p-1 font-serif tracking-wider bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-md px-4 py-2">
+                Search</button>
         </div>
+           
+            
     </form>
 
-    <h1 class="text-3xl font-bold   "> CREATE A TASK </h1>
 
-    <x-layouts.create-post-form :priorities="$priorities" :tags="$tags"> </x-layouts.create-post-form>
-    <div>
-        <table class="min-w-full table-auto">
-            <thead class="justify-between">
-                <tr class="bg-gray-800">
-                    <th class="px-16 py-2">
-                        <span class="text-gray-300">Title</span>
+        <table class="w-screen mx-10  table-auto flex flex-col ">
+            <thead class="w-full px-10 ">
+                <tr class=" w-full flex flex-row justify-around tracking-widest bg-sky-800 text-white font-serif p-2">
+                    <th class="justify-center items-center flex w-full">
+                        <span >Title</span>
                     </th>
-                    <th class="px-16 py-2">
-                        <span class="text-gray-300">Content</span>
+                    <th class="justify-center items-center flex  w-full">
+                        <span>Content</span>
                     </th>
-                    <th class="px-16 py-2">
-                        <span class="text-gray-300">Edit</span>
+                    <th class="justify-center items-center flex w-full ">
+                        <span >Edit</span>
                     </th>
 
-                    <th class="px-16 py-2">
-                        <span class="text-gray-300">Delete</span>
+                    <th class="justify-center items-center flex w-full ">
+                        <span >Delete</span>
                     </th>
-                    <th class="px-16 py-2">
-                        <span class="text-gray-300">DueDate</span>
+                    <th class="justify-center items-center flex w-full ">
+                        <span >DueDate</span>
                     </th>
-                    <th class="px-16 py-2">
-                        <span class="text-gray-300">Priority</span>
+                    <th class="justify-center items-center flex w-full ">
+                        <span >Priority</span>
+                    </th>
+                    <th class="justify-center items-center flex w-full">
+                        <span >Tags</span>
                     </th>
                 </tr>
             </thead>
-
-    </div>
-
-
-    <tbody>
+    
+    <tbody class=" w-full px-10 ">
         @foreach ($todos as $todo)
-            <tr class="bg-white border-4 border-gray-200">
-                <td>{{ $todo['title'] }}</td>
-                <td>{{ $todo['content'] }}</td>
+            <tr class="border-4 border-gray w-full flex flex-row justify-around items-center">
+                <td class="justify-center  h-14 w-full items-center text-center flex">{{ $todo['title'] }}</td>
+                <td class="justify-center  w-full items-center text-center flex">{{ $todo['content'] }}</td>
+               
 
 
-                <td><a href="todo/edit/{{ $todo['id'] }}"
-                        class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 
-                                mr-2 mb-2 
+                <td class="justify-center w-full flex items-center"><a href="todo/edit/{{ $todo['id'] }}"
+                        class="text-white bg-blue-800 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 
+                                 mb-2 
                                 focus:outline-none">
                         Edit</a>
                     </a>
                 </td>
 
-                <td>
-                    <form action="/todo/{{ $todo['id'] }}" method="POST">
+                <td class="justify-center  w-full items-center flex">
+                    <form action="/todo/{{ $todo['id'] }}" method="POST" class="flex justify-center items-center">
 
                         @csrf
                         @method('DELETE')
 
-                        <button class="bg-red-500 hover:bg-red-700 text-white  py-2 px-4 rounded-full">
+                        <button class="bg-red-500 hover:bg-red-700 text-white  py-2 px-4 rounded-lg">
                             Delete
                         </button>
-                <td>{{ $todo['due_date'] }}</td>
-                <td>{{ $todo['priority'] }}</td>
+                </form>
 
-                <td class="px-4 py-2">
+                <td class="justify-center w-full items-center flex"> {{ $todo['due_date'] }}</td>
+                <td class="justify-center w-full items-center flex ">{{ $todo['priority'] }}</td>
+
+                <td class=" flex justify-center items-center w-full">
                     @foreach ($todo->tags as $tag)
                         {{ $tag->tag }}
                     @endforeach
                 </td>
 
 
-                </form>
                 </td>
             </tr>
         @endforeach
     </tbody>
+
+
+        </div>
+
+        
+       
+    </div>
+
+    
+ 
+    
+
+
+  
     </table>
     {{ $todos->links() }}
     </div>
