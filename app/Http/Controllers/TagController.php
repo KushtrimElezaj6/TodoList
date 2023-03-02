@@ -57,5 +57,9 @@ class TagController extends Controller
         return back()->with("massage", "tagu u krijua me sukses");
     }
 
-    
+    protected function query(Request $request){
+
+        $tag =$request->tag();
+        $tagSelect= $request->get('select');
+    }
 }
